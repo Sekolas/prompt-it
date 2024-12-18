@@ -4,15 +4,16 @@ import  Image from "@node_modules/next/image";
 import {useState,useEffect, use} from "react";
 import {signIn,signOut,useSession, getProviders} from "next-auth/react"
 function nav() {
-    const isUserLOggedIn = true;
+
+    const {data:session}=useSession();
     const [providers, setProviders] = useState(null);
     const [toggleDropdown, setToggleDropdown] = useState(false);
     useEffect(() => {
-        const setProviders = async () => {
+        const setuProviders = async () => {
             const response = await getProviders();
             setProviders(response);
         }
-        setProviders();
+        setuProviders();
     },[])
     
 
@@ -23,7 +24,7 @@ function nav() {
             <p className="logo_text">Prompt It</p>
         </Link>
         <div className="sm:flex hidden">
-            {isUserLOggedIn ? (
+            {session?.user ? (
                 <div className="flex gap-3 md:gap-5">
                     <Link href="/create-prompt" className="black_btn">
                         Create Post
@@ -32,7 +33,7 @@ function nav() {
                         Sign Out
                     </button>
                     <Link href="/profile">
-                        <Image src="/assets/images/logo.svg" alt="profile" width={37} height={37} className="rounded-full"/>
+                        <Image src={session?.user.image} alt="profile" width={37} height={37} className="rounded-full"/>
                     </Link>
                 </div>
             ) : (
@@ -47,9 +48,9 @@ function nav() {
         </div>
         {/* Mobile Navigation */}
         <div className="sm:hidden flex relative">
-            {isUserLOggedIn ? (
+            {session?.user ? (
                 <div className="flex">
-                    <Image src="/assets/images/logo.svg" alt="profile" width={37} height={37} className="rounded-full" onClick={() => setToggleDropdown((prev) => !prev)}/>
+                    <Image src={session?.user.image} alt="profile" width={37} height={37} className="rounded-full" onClick={() => setToggleDropdown((prev) => !prev)}/>
                     {toggleDropdown && (
                         <div className="dropdown">
                             <Link href="/profile" className="dropdown_link" onClick={() => setToggleDropdown(false)}>
